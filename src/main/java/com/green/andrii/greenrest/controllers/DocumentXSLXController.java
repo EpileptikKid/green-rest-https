@@ -2,17 +2,16 @@ package com.green.andrii.greenrest.controllers;
 
 import com.green.andrii.greenrest.models.Client;
 import com.green.andrii.greenrest.services.ClientService;
-import com.green.andrii.greenrest.utils.ParserXSLX;
+import com.green.andrii.greenrest.utils.DocumentParser;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import java.io.*;
 import java.text.ParseException;
 import java.util.List;
@@ -22,35 +21,28 @@ import java.util.List;
 public class DocumentXSLXController {
 
     private final ClientService clientService;
+    @Qualifier("configuration1")
+    private final DocumentParser documentParser;
 
     @Autowired
-    public DocumentXSLXController(ClientService clientService) {
+    public DocumentXSLXController(ClientService clientService,
+                                  DocumentParser documentParser) {
         this.clientService = clientService;
+        this.documentParser = documentParser;
     }
 
     @PostMapping("")
-    public ResponseEntity<String> uploadInvoiceList(@RequestParam("file")MultipartFile file, HttpServletResponse response) throws IOException, ParseException {
-
-        FileInputStream inputFile = convertMPFileToFIS(file);
-        XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
-        List<Client> clients = ParserXSLX.parse(workbook);
+    public ResponseEntity<String> uploadInvoiceList(@RequestParam("file")MultipartFile file, HttpServletResponse response) {
+        List<Client> clients;
+        try {
+            clients = documentParser.parse(file);
+        } catch (ParseException | IOException e) {
+            return ResponseEntity.ofNullable("Сталася помилка");
+        }
         int countAdded = clientService.saveAll(clients);
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        if (countAdded < 5)
-            return ResponseEntity.ok("Додано " + countAdded + " замовлення");
-        else
-            return ResponseEntity.ok("Додано " + countAdded + " замовлень");
+        return ResponseEntity.ok("Додано " + countAdded + " замовлень");
     }
 
-    private FileInputStream convertMPFileToFIS(MultipartFile file) throws IOException {
-        byte[] bytes = file.getBytes();
-        File tempFile = File.createTempFile(file.getOriginalFilename(), null);
-        FileOutputStream fos = new FileOutputStream(tempFile);
-        fos.write(bytes);
-        fos.close();
-        FileInputStream fileInputStream = new FileInputStream(tempFile);
-        tempFile.delete();
-        return fileInputStream;
-    }
 }

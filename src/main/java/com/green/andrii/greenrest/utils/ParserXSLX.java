@@ -8,19 +8,37 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class ParserXSLX {
+@Component
+@Qualifier("implementation1")
+public class ParserXSLX implements DocumentParser {
+
     private static String manager = null;
     private static Date date = new Date();
     private static String clientName = null;
-
     private static final DateFormat checkDate = new SimpleDateFormat("dd.MM.yyyy");
-    public static List<Client> parse(XSSFWorkbook workbook) throws ParseException {
+
+    public List<Client> parse(MultipartFile file) throws ParseException, IOException {
+        byte[] bytes = file.getBytes();
+        File tempFile = File.createTempFile(file.getOriginalFilename(), null);
+        FileOutputStream fos = new FileOutputStream(tempFile);
+        fos.write(bytes);
+        fos.close();
+        FileInputStream fileInputStream = new FileInputStream(tempFile);
+        tempFile.delete();
+        XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
         List<Row> rows = new ArrayList<>();
         List<Client> clients = new ArrayList<>();
         Sheet sheet = workbook.getSheetAt(0);
