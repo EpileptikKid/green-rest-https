@@ -20,7 +20,7 @@ public class Product {
     @Enumerated(EnumType.ORDINAL)
     private Packing packing;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
 

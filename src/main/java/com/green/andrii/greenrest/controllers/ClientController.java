@@ -38,6 +38,17 @@ public class ClientController {
         return  ResponseEntity.ok().headers(headers).body(responseClientList);
     }
 
+    @RequestMapping(method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> options() {
+        System.out.println("great");
+        HttpHeaders header = new HttpHeaders();
+        header.add("Allow", "GET,POST,PUT,DELETE,OPTIONS");
+        header.add("Access-Control-Allow-Headers", "Content-Type");
+        return ResponseEntity.ok()
+                .headers(header)
+                .build();
+    }
+
     @GetMapping("/name")
     public ResponseEntity<List<ClientProjDTO>> getAllClientsName(@RequestParam(value = "date", defaultValue = "today") String date) {
         List<Client> result = clientService.getAllClientsByDate(convertDate(date));

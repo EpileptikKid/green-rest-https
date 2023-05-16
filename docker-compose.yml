@@ -1,8 +1,8 @@
 version: '3'
 services:
-  postgresdb:
+  postgresbase:
     image: postgres:alpine
-    container_name: postgresdb
+    container_name: postgresbase
     ports:
       - 5432:5432
     environment:
@@ -18,4 +18,4 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      - postgresdb
+      - postgresbase

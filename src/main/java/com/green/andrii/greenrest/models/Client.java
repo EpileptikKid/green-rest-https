@@ -34,12 +34,12 @@ public class Client {
     private Date dateComplete;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_worker", referencedColumnName = "id")
     private Worker worker;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<Product> products;
 
 

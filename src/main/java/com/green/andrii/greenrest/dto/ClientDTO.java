@@ -16,19 +16,51 @@ public class ClientDTO {
 
     private List<ProductDTO> products;
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getManager() { return manager; }
-    public void setManager(String manager) { this.manager = manager; }
-    public String getComment() { return comment; }
-    public void setComment(String comment) { this.comment = comment; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-    public List<ProductDTO> getProducts() { return products; }
+    public int getId() {
+        return id;
+    }
 
-    public void setProducts(List<Product> productList) {
-        this.products = productList.stream().map(product -> new ModelMapper().map(product, ProductDTO.class)).toList();
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getManager() {
+        return manager;
+    }
+
+    public void setManager(String manager) {
+        this.manager = manager;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<ProductDTO> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products.stream().map(product -> new ModelMapper().map(product, ProductDTO.class)).toList();
     }
 }

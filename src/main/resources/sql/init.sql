@@ -25,3 +25,5 @@ create table product (
     client_id integer references client(id) on delete cascade,
     status    char
 );
+
+INSERT INTO worker (name, surname, email) VALUES ('John', 'Doe', 'johndoe@example.com');
